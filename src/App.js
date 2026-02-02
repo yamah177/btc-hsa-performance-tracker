@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Area, AreaChart } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 const BitcoinComprehensiveHSATracker = () => {
   const [contributionAmount, setContributionAmount] = useState(500);
@@ -9,7 +9,7 @@ const BitcoinComprehensiveHSATracker = () => {
   const [lookbackPeriod, setLookbackPeriod] = useState('1');
   const [projectionCAGR, setProjectionCAGR] = useState(25);
   const [activeTab, setActiveTab] = useState('current'); // current, lookback, projections
-  
+
   // HSA contribution limits
   const hsaLimits = {
     individual: { 2024: 4150, 2025: 4300, 2026: 4400 },
