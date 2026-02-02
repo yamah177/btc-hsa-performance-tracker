@@ -26,10 +26,17 @@ useEffect(() => {
   };
   
   const getYearlyLimit = (year) => {
-    const limit = hsaLimits[contributionType][year] || hsaLimits[contributionType][2026];
-    const catchup = contributionType === 'catchup' ? hsaLimits.catchup : 0;
-    return limit + catchup;
-  };
+  let baseLimit;
+  if (contributionType === 'catchup') {
+    // Catch-up defaults to individual + $1000
+    baseLimit = hsaLimits.individual[year] || hsaLimits.individual[2026];
+  } else {
+    baseLimit = hsaLimits[contributionType][year] || hsaLimits[contributionType][2026];
+  }
+  
+  const catchup = contributionType === 'catchup' ? hsaLimits.catchup : 0;
+  return baseLimit + catchup;
+};
   
   const getMonthlyLimit = (year) => {
     return Math.floor(getYearlyLimit(year) / 12);
@@ -678,75 +685,128 @@ useEffect(() => {
             </div>
             
             {/* Contribution Type */}
-            <div>
-              <label style={{
-                display: 'block',
-                fontSize: '12px',
-                color: '#9ca3af',
-                marginBottom: '12px',
-                fontWeight: '600',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-              }}>
-                HSA Type
-              </label>
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                {[
-                  { value: 'individual', label: 'Individual', limit: `$${hsaLimits.individual[2026]}` },
-                  { value: 'family', label: 'Family', limit: `$${hsaLimits.family[2026]}` },
-                  { value: 'catchup', label: '55+ Catch-Up', limit: `$${hsaLimits.individual[2026] + hsaLimits.catchup}` }
-                ].map(type => (
-                  <button
-                    key={type.value}
-                    onClick={() => setContributionType(type.value)}
-                    style={{
-                      flex: 1,
-                      minWidth: '140px',
-                      padding: '14px 20px',
-                      background: contributionType === type.value 
-                        ? 'linear-gradient(135deg, #f7931a 0%, #ff6b35 100%)'
-                        : 'rgba(255, 255, 255, 0.04)',
-                      border: contributionType === type.value
-                        ? 'none'
-                        : '1px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '12px',
-                      color: '#ffffff',
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      transition: 'all 0.2s ease',
-                      boxShadow: contributionType === type.value
-                        ? '0 6px 24px rgba(247, 147, 26, 0.4)'
-                        : 'none'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (contributionType !== type.value) {
-                        e.target.style.background = 'rgba(255, 255, 255, 0.08)';
-                        e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (contributionType !== type.value) {
-                        e.target.style.background = 'rgba(255, 255, 255, 0.04)';
-                        e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                      }
-                    }}
-                  >
-                    <div>{type.label}</div>
-                    <div style={{ 
-                      fontSize: '11px', 
-                      opacity: 0.7,
-                      marginTop: '4px',
-                      fontFamily: '"JetBrains Mono", monospace'
-                    }}>
-                      {type.limit}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+<div>
+  <label style={{
+    display: 'block',
+    fontSize: '12px',
+    color: '#9ca3af',
+    marginBottom: '12px',
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px'
+  }}>
+    HSA Type
+  </label>
+  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '16px' }}>
+    {[
+      { value: 'individual', label: 'Individual', limit: `$${hsaLimits.individual[2026]}` },
+      { value: 'family', label: 'Family', limit: `$${hsaLimits.family[2026]}` }
+    ].map(type => (
+      <button
+        key={type.value}
+        onClick={() => setContributionType(type.value)}
+        style={{
+          flex: 1,
+          minWidth: '180px',
+          padding: '14px 20px',
+          background: contributionType === type.value 
+            ? 'linear-gradient(135deg, #f7931a 0%, #ff6b35 100%)'
+            : 'rgba(255, 255, 255, 0.04)',
+          border: contributionType === type.value
+            ? 'none'
+            : '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '12px',
+          color: '#ffffff',
+          cursor: 'pointer',
+          fontSize: '13px',
+          fontWeight: '600',
+          transition: 'all 0.2s ease',
+          boxShadow: contributionType === type.value
+            ? '0 6px 24px rgba(247, 147, 26, 0.4)'
+            : 'none'
+        }}
+        onMouseEnter={(e) => {
+          if (contributionType !== type.value) {
+            e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+            e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (contributionType !== type.value) {
+            e.target.style.background = 'rgba(255, 255, 255, 0.04)';
+            e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+          }
+        }}
+      >
+        <div>{type.label}</div>
+        <div style={{ 
+          fontSize: '11px', 
+          opacity: 0.7,
+          marginTop: '4px',
+          fontFamily: '"JetBrains Mono", monospace'
+        }}>
+          {type.limit}
         </div>
+      </button>
+    ))}
+  </div>
+  
+  {/* 55+ Catch-Up Checkbox */}
+  <div 
+    onClick={() => setContributionType(contributionType === 'catchup' ? 'individual' : 'catchup')}
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      padding: '12px 16px',
+      background: contributionType === 'catchup' 
+        ? 'rgba(247, 147, 26, 0.1)' 
+        : 'rgba(255, 255, 255, 0.02)',
+      border: contributionType === 'catchup'
+        ? '1px solid rgba(247, 147, 26, 0.3)'
+        : '1px solid rgba(255, 255, 255, 0.05)',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease'
+    }}
+  >
+    <div style={{
+      width: '20px',
+      height: '20px',
+      borderRadius: '4px',
+      background: contributionType === 'catchup' 
+        ? 'linear-gradient(135deg, #f7931a 0%, #ff6b35 100%)'
+        : 'rgba(255, 255, 255, 0.05)',
+      border: contributionType === 'catchup'
+        ? 'none'
+        : '1px solid rgba(255, 255, 255, 0.2)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '14px',
+      transition: 'all 0.2s ease'
+    }}>
+      {contributionType === 'catchup' && '✓'}
+    </div>
+    <div style={{ flex: 1 }}>
+      <div style={{ 
+        fontSize: '13px', 
+        fontWeight: '600',
+        color: contributionType === 'catchup' ? '#f7931a' : '#e5e5e5'
+      }}>
+        Age 55+ Catch-Up Contribution
+      </div>
+      <div style={{ 
+        fontSize: '11px', 
+        color: '#71717a',
+        marginTop: '2px',
+        fontFamily: '"JetBrains Mono", monospace'
+      }}>
+        Additional +$1,000/year
+      </div>
+    </div>
+  </div>
+</div>
         
         {/* Tabs */}
         <div style={{
