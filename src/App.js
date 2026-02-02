@@ -4,7 +4,15 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 const BitcoinComprehensiveHSATracker = () => {
   const [contributionAmount, setContributionAmount] = useState(500);
   const [contributionType, setContributionType] = useState('individual'); // individual, family, catchup
-  const [companyMatch, setCompanyMatch] = useState(0);
+const [companyMatch, setCompanyMatch] = useState(0);
+
+// Add this new useEffect here:
+useEffect(() => {
+  const maxMonthly = Math.floor(getYearlyLimit(2026) / 12);
+  if (contributionAmount > maxMonthly) {
+    setContributionAmount(maxMonthly);
+  }
+}, [contributionType]); // eslint-disable-line react-hooks/exhaustive-deps
   const [selectedMetric, setSelectedMetric] = useState('return');
   const [lookbackPeriod, setLookbackPeriod] = useState('1');
   const [projectionCAGR, setProjectionCAGR] = useState(25);
