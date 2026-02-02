@@ -3,17 +3,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 const BitcoinComprehensiveHSATracker = () => {
   const [contributionAmount, setContributionAmount] = useState(500);
-  const [contributionType, setContributionType] = useState('individual'); // individual, family, catchup
+  const [contributionType, setContributionType] = useState('individual');
 const [companyMatch, setCompanyMatch] = useState(0);
-
-// Add this new useEffect here:
-useEffect(() => {
-  const maxMonthly = Math.floor(getYearlyLimit(2026) / 12);
-  if (contributionAmount > maxMonthly) {
-    setContributionAmount(maxMonthly);
-  }
-}, [contributionType]); // eslint-disable-line react-hooks/exhaustive-deps
-  const [selectedMetric, setSelectedMetric] = useState('return');
+const [selectedMetric, setSelectedMetric] = useState('return');
   const [lookbackPeriod, setLookbackPeriod] = useState('1');
   const [projectionCAGR, setProjectionCAGR] = useState(25);
   const [activeTab, setActiveTab] = useState('current'); // current, lookback, projections
@@ -41,6 +33,15 @@ useEffect(() => {
   const getMonthlyLimit = (year) => {
     return Math.floor(getYearlyLimit(year) / 12);
   };
+
+
+// Add this here:
+useEffect(() => {
+  const maxMonthly = Math.floor(getYearlyLimit(2026) / 12);
+  if (contributionAmount > maxMonthly) {
+    setContributionAmount(maxMonthly);
+  }
+}, [contributionType]); // eslint-disable-line react-hooks/exhaustive-deps
   
   // Historical price data
   const historicalPrices = {
@@ -807,6 +808,8 @@ useEffect(() => {
     </div>
   </div>
 </div>
+</div>
+        </div>
         
         {/* Tabs */}
         <div style={{
