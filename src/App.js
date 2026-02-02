@@ -542,7 +542,6 @@ const BitcoinComprehensiveHSATracker = () => {
             color: '#e5e5e5',
             textTransform: 'uppercase',
             letterSpacing: '1px',
-            fontSize: '14px'
           }}>
             Configuration
           </h2>
